@@ -61,6 +61,20 @@
 | Деплой (Uvicorn, Gunicorn) | [`fastapi/deployment.md`](fastapi/deployment.md) |
 | Best practices | [`fastapi/best-practices.md`](fastapi/best-practices.md) |
 
+#### Продвинутые темы
+
+| Тема | Файл |
+|------|------|
+| Аутентификация: OAuth2, JWT | [`fastapi/auth.md`](fastapi/auth.md) |
+| Интеграция с БД (SQLAlchemy async) | [`fastapi/database.md`](fastapi/database.md) |
+| Структура проекта | [`fastapi/project-structure.md`](fastapi/project-structure.md) |
+| Продвинутое тестирование | [`fastapi/advanced-testing.md`](fastapi/advanced-testing.md) |
+| Логирование и мониторинг | [`fastapi/logging-monitoring.md`](fastapi/logging-monitoring.md) |
+| Кэширование | [`fastapi/caching.md`](fastapi/caching.md) |
+| Кастомизация документации | [`fastapi/custom-docs.md`](fastapi/custom-docs.md) |
+| Background Tasks, Celery | [`fastapi/background-tasks.md`](fastapi/background-tasks.md) |
+| Продвинутый middleware | [`fastapi/advanced-middleware.md`](fastapi/advanced-middleware.md) |
+
 ---
 
 ### 🗄️ SQLAlchemy
