@@ -207,6 +207,27 @@
 
 ---
 
+### 🦋 uv
+
+Пакетный менеджер для Python от Astral. Невероятно быстрый, написан на Rust.
+
+Раздел: [`uv/`](uv/README.md)
+
+| Файл | Тема |
+|------|------|
+| Обзор и установка | [`uv/overview.md`](uv/overview.md) |
+| Управление проектами | [`uv/projects.md`](uv/projects.md) |
+| Управление Python | [`uv/python-management.md`](uv/python-management.md) |
+| Tools (утилиты) | [`uv/tools.md`](uv/tools.md) |
+| Скрипты (PEP 723) | [`uv/scripts.md`](uv/scripts.md) |
+| Workspaces | [`uv/workspaces.md`](uv/workspaces.md) |
+| Источники зависимостей | [`uv/sources.md`](uv/sources.md) |
+| Конфигурация | [`uv/configuration.md`](uv/configuration.md) |
+| pip-интерфейс | [`uv/pip-interface.md`](uv/pip-interface.md) |
+| Советы и трюки | [`uv/tips-tricks.md`](uv/tips-tricks.md) |
+
+---
+
 ## 📝 Формат заметок
 
 Каждая заметка содержит:
