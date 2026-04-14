@@ -38,6 +38,11 @@
 | · Основы asyncio | [`python/async/asyncio-basics.md`](python/async/asyncio-basics.md) |
 | · async/await паттерны | [`python/async/async-await.md`](python/async/async-await.md) |
 | · Конкурентное выполнение | [`python/async/concurrent-execution.md`](python/async/concurrent-execution.md) |
+| · Синхронизация | [`python/async/synchronization.md`](python/async/synchronization.md) |
+| · Обработка ошибок | [`python/async/error-handling.md`](python/async/error-handling.md) |
+| · HTTP клиенты | [`python/async/http-clients.md`](python/async/http-clients.md) |
+| · Тестирование | [`python/async/testing.md`](python/async/testing.md) |
+| · Частые ошибки | [`python/async/common-mistakes.md`](python/async/common-mistakes.md) |
 
 ---
 

@@ -172,12 +172,72 @@ async def main():
 asyncio.run(main())
 ```
 
+## asyncio.to_thread() — Запуск blocking кода (Python 3.9+)
+
+```python
+import asyncio
+import time
+
+# Blocking функция (не async)
+def blocking_io() -> str:
+    with open("large_file.txt", "r") as f:
+        return f.read()
+
+def cpu_intensive(n: int) -> int:
+    return sum(range(n))
+
+# Запуск в отдельном потоке
+async def main():
+    # I/O blocking
+    content = await asyncio.to_thread(blocking_io)
+    print(f"Read {len(content)} chars")
+
+    # CPU-intensive (но лучше использовать multiprocessing)
+    result = await asyncio.to_thread(cpu_intensive, 10_000_000)
+    print(f"Sum: {result}")
+
+asyncio.run(main())
+```
+
+### to_thread с параметрами
+
+```python
+# Передача аргументов
+async def main():
+    result = await asyncio.to_thread(
+        requests.get,
+        "https://api.example.com/data",
+        timeout=10,
+    )
+    print(result.json())
+
+asyncio.run(main())
+```
+
+### aiofiles — асинхронная работа с файлами
+
+```python
+import aiofiles
+
+# Чтение
+async def read_file(path: str) -> str:
+    async with aiofiles.open(path, "r") as f:
+        return await f.read()
+
+# Запись
+async def write_file(path: str, content: str) -> None:
+    async with aiofiles.open(path, "w") as f:
+        await f.write(content)
+```
+
 ## Best Practices
 
 ✅ **Используйте** `async`/`await` для I/O операций
 ✅ **Параллельте** независимые задачи через `gather()`
 ✅ **Обрабатывайте** ошибки через `return_exceptions=True`
 ✅ **Используйте** `async with` для контекстных менеджеров
+✅ **Используйте** `asyncio.to_thread()` для blocking I/O
+✅ **Используйте** `aiofiles` для асинхронной работы с файлами
 
 ❌ **Не смешивайте** sync и async код без необходимости
 ❌ **Не блокируйте** event loop (`time.sleep`, `requests.get`)
@@ -187,3 +247,4 @@ asyncio.run(main())
 
 - [Официальная документация async/await](https://docs.python.org/3/reference/compound_stmts.html#async-def)
 - [PEP 492 — async/await syntax](https://peps.python.org/pep-0492/)
+- [asyncio.to_thread](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread)
