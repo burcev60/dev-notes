@@ -1,41 +1,179 @@
-# LangChain — Chains
+# LangChain — Chains и LCEL
 
 ## Описание
 
-Chains — последовательность вызовов LLM для выполнения задачи.
+LangChain Expression Language (LCEL) — декларативный способ построения цепочек через композицию Runnable-объектов.
 
-## Базовая цепочка
+**Версии:** langchain 1.2.15, langchain-core 1.2.28
 
-```python
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+## Установка
 
-prompt = PromptTemplate(
-    input_variables=["product"],
-    template="Что такое {product}?"
-)
-
-chain = LLMChain(llm=llm, prompt=prompt)
-result = chain.invoke({"product": "AI"})
+```bash
+pip install langchain langchain-core
 ```
 
-## Sequential Chains
+## Базовый паттерн: prompt | model | parser
 
 ```python
-from langchain.chains import SimpleSequentialChain
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_openai import ChatOpenAI
 
-overall_chain = SimpleSequentialChain(
-    chains=[chain1, chain2],
-    verbose=True
+# Модель
+model = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+# Промпт
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a {topic} expert. Answer concisely."),
+    ("human", "{question}"),
+])
+
+# Цепочка через LCEL
+chain = prompt | model | StrOutputParser()
+
+# Вызов
+result = chain.invoke({
+    "topic": "Python",
+    "question": "What are decorators?"
+})
+print(result)
+```
+
+## Runnable-объекты
+
+```python
+from langchain_core.runnables import (
+    RunnablePassthrough,   # Пропускает input без изменений
+    RunnableLambda,        # Оборачивает функцию в Runnable
+    RunnableParallel,      # Параллельное выполнение веток
+    RunnableBranch,        # Условное ветвление
+    RunnableAssign,        # Добавляет поле к dict-состоянию
+    RunnablePick,          # Извлекает поле из dict
 )
-result = overall_chain.invoke("input")
+
+# RunnablePassthrough — передаёт input дальше
+chain = (
+    {"context": retriever, "question": RunnablePassthrough()}
+    | prompt
+    | model
+    | StrOutputParser()
+)
+
+# RunnableLambda — обёртка обычной функции
+def extract_json(text: str) -> dict:
+    import json
+    return json.loads(text)
+
+chain = model | StrOutputParser() | RunnableLambda(extract_json)
+
+# RunnableParallel — несколько веток параллельно
+chain = RunnableParallel({
+    "summary": summary_chain,
+    "entities": entity_chain,
+    "sentiment": sentiment_chain,
+})
+result = chain.invoke({"text": "Some article..."})
+# {'summary': '...', 'entities': [...], 'sentiment': 'positive'}
+```
+
+## RunnableBranch — условная логика
+
+```python
+from langchain_core.runnables import RunnableBranch
+
+def is_math_question(x):
+    return "calculate" in x.get("question", "").lower()
+
+math_chain = math_prompt | math_model | StrOutputParser()
+general_chain = general_prompt | general_model | StrOutputParser()
+
+branch = RunnableBranch(
+    (is_math_question, math_chain),
+    general_chain,  # default
+)
+
+result = branch.invoke({"question": "Calculate 2+2"})
+```
+
+## Конфигурация на лету
+
+```python
+from langchain_core.runnables import ConfigurableField
+
+model = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0
+).configurable_fields(
+    temperature=ConfigurableField(
+        id="temperature",
+        name="Temperature",
+        description="Controls randomness",
+    ),
+    model=ConfigurableField(
+        id="model_name",
+        name="Model",
+    ),
+)
+
+# Использование с конфигурацией
+result = chain.invoke(
+    {"question": "What is AI?"},
+    config={"configurable": {"temperature": 0.7, "model_name": "gpt-4o"}}
+)
+```
+
+## Streaming
+
+```python
+chain = prompt | model | StrOutputParser()
+
+# Потоковый вывод
+for chunk in chain.stream({"question": "Tell me a story"}):
+    print(chunk, end="", flush=True)
+
+# Асинхронный стриминг
+async for chunk in chain.astream({"question": "Tell me a story"}):
+    print(chunk, end="", flush=True)
+```
+
+## Init-фабрики (langchain 1.x)
+
+```python
+from langchain.chat_models import init_chat_model
+from langchain.embeddings import init_embeddings
+
+# Единая фабрика — ленивая инициализация
+model = init_chat_model("openai:gpt-4o-mini")
+model = init_chat_model("anthropic:claude-sonnet-4-20250514")
+
+embeddings = init_embeddings("openai:text-embedding-3-small")
+```
+
+## Batch
+
+```python
+# Параллельный вызов нескольких input
+results = chain.batch([
+    {"question": "What is Python?"},
+    {"question": "What is AI?"},
+    {"question": "What is ML?"},
+])
+
+# Асинхронный batch
+results = await chain.abatch([...])
 ```
 
 ## Best Practices
 
-✅ **Используйте** chains для многошаговых задач
-✅ **Комбинируйте** разные типы chains
+✅ **Используйте** LCEL (`|`) вместо устаревших `LLMChain`
+✅ **Используйте** `RunnableParallel` для параллельных веток
+✅ **Используйте** `stream()` для лучшего UX
+✅ **Используйте** `init_chat_model()` для абстрагирования от провайдера
+
+❌ **Не используйте** `LLMChain` — он устарел в пользу LCEL
+❌ **Не блокируйте** стриминг там, где он доступен
 
 ## Ссылки
 
-- [LangChain Chains](https://python.langchain.com/docs/modules/chains/)
+- [LangChain LCEL Docs](https://python.langchain.com/docs/how_to/#langchain-expression-language-lcel)
+- [LangChain API Reference](https://python.langchain.com/api_reference/langchain/)
