@@ -216,6 +216,19 @@
 | Индексы и оптимизация | [`databases/postgresql/indexes.md`](databases/postgresql/indexes.md) |
 | Планы запросов (EXPLAIN) | [`databases/postgresql/query-plans.md`](databases/postgresql/query-plans.md) |
 
+#### Продвинутый PostgreSQL
+
+| Тема | Файл |
+|------|------|
+| Connection Pooling | [`databases/postgresql/connection-pooling.md`](databases/postgresql/connection-pooling.md) |
+| Транзакции, isolation levels | [`databases/postgresql/transactions.md`](databases/postgresql/transactions.md) |
+| Продвинутые индексы (GIN, GiST) | [`databases/postgresql/indexes-advanced.md`](databases/postgresql/indexes-advanced.md) |
+| EXPLAIN ANALYZE, VACUUM | [`databases/postgresql/explain-analyze.md`](databases/postgresql/explain-analyze.md) |
+| Оптимизация запросов | [`databases/postgresql/optimization.md`](databases/postgresql/optimization.md) |
+| JSONB операторы и индексы | [`databases/postgresql/jsonb.md`](databases/postgresql/jsonb.md) |
+| Alembic миграции | [`databases/postgresql/migrations.md`](databases/postgresql/migrations.md) |
+| Тестирование БД | [`databases/postgresql/testing.md`](databases/postgresql/testing.md) |
+
 #### SQL
 
 | Тема | Файл |
